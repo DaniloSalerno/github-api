@@ -7,7 +7,18 @@ export default {
   data() {
     return {
       state,
+      typingTimer: null
     }
+
+  },
+  methods: {
+    keyup() {
+      clearTimeout(this.typingTimer);
+      this.typingTimer = setTimeout(() => {
+        this.state.fetchData();
+      }, 700);
+    },
+
 
   },
   created() {
@@ -21,7 +32,7 @@ export default {
 
   <div class="d-flex">
     <input type="text" placeholder="Search users by name" v-model="this.state.searched"
-      :class="this.state.invalidInput ? 'invalidInput' : ''">
+      :class="this.state.invalidInput ? 'invalidInput' : ''" @keyup="keyup()">
     <div v-if="this.state.invalidInput" class="text-danger">Devi digitare almeno 3 caratteri</div>
     <select name="type" id="type" v-model="this.state.type">
       <option value="repositories" selected>Repositories</option>
