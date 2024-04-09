@@ -24,7 +24,7 @@ export default {
 
             <img width="75"
                 :src="this.state.dataType === 'repositories' ? element.owner.avatar_url : element.avatar_url"
-                alt="profile image" class="image">
+                alt="profile image" class="image rounded-circle">
 
             <a :href="element.html_url" target="_blank" class="name text-decoration-none">
                 {{ this.state.dataType === 'repositories' ? element.name : element.login }}
@@ -71,6 +71,14 @@ export default {
 
 .card {
     padding: 0.25rem;
+
+    &:hover {
+        box-shadow: 0px 0px 12px 4px rgba(255, 255, 255, 0.5);
+
+        scale: 1.1;
+
+        transition: all 0.5s;
+    }
 
     .description {
         overflow: hidden;

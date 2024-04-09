@@ -27,12 +27,25 @@ export const state = reactive({
     // oggetto che conterrà i link per fare le chiamate api alle altre pagine
     urls: {},
 
+    // pagina corrente della paginazione
     currentPage: 1,
+
+    // Messaggio da 
+    queryMessage: '',
 
     fetchData(url) {
 
+        // controllo se nell'url che viene passato a fetchData è indicata la pagina, uso questo numero come current page
+        if (!isNaN(url.split('page=')[1])) {
+
+            this.currentPage = url.split('page=')[1]
+
+        } else {
+            this.currentPage = 1
+        }
+
         // Controllo che nell'input ci siano almeno 3 caratteri eliminando gli spazi
-        if (this.searched.replace(/\s+/g, '').trim().length > 2) {
+        if (this.searched.replace(/\s+/g, '').length > 2) {
 
             // visualizziamo il loader
             this.loader = true
@@ -40,8 +53,7 @@ export const state = reactive({
             axios.get(url)
                 .then(response => {
 
-                    console.log(response);
-
+                    // Controllo se in header è presente la proprietà link
                     if (response.headers.hasOwnProperty('link')) {
 
                         // Nell'header sono presenti i link per next,prev e last, li divido in un array
@@ -80,14 +92,17 @@ export const state = reactive({
                         // L'input è valido
                         this.invalidInput = false
 
+                        // Messaggio da visualizzare in pagina
+                        this.queryMessage = 'Results for ' + this.searched
+
                         // Se c'è la proprietà name significa che abbiamo cercato per repositories
                         if (response.data.items[0].hasOwnProperty('name')) {
                             this.dataType = 'repositories'
                             // Altrimenti abbiamo cercato per users
                         } else if (response.data.items[0].hasOwnProperty('login')) {
                             this.dataType = 'users'
-                        }
-                        // In modo da variare la visualizzazione delle card
+                        }// In modo da variare la visualizzazione delle card
+
 
                         // Se non abbiamo risultati
                     } else {
@@ -96,8 +111,10 @@ export const state = reactive({
                         // togliamo il loader
                         this.loader = false
 
-                        console.log('nessun elemento trovato');
+                        // Messaggio da visualizzare in pagina
+                        this.queryMessage = 'No results found for \'' + this.searched + '\''
                     }
+
                 })
                 .catch(err => {
                     console.error(err);

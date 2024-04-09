@@ -34,18 +34,21 @@ export default {
       </div>
 
       <!-- Altrimenti visualizziamo un messaggio -->
-      <div v-else-if="this.state.dataEmpty">
-        <h1 class="text-danger">Nessun risultato trovato</h1>
+      <div v-else-if="this.state.dataEmpty" class="py-5">
+        <h1 class="text-danger text-center">{{ this.state.queryMessage }}</h1>
       </div>
 
 
       <!-- Se loader è false e abbiamo risultati visualizziamo i risultati -->
       <div v-else-if="this.state.data.length > 0 && !this.state.loader" class="py-5">
 
-        <div class="navigationBtns d-flex gap-5">
+        <h3 class="text-light text-center">
+          {{ this.state.queryMessage }}
+        </h3>
 
-          <div class="btn-conteiner prev-button"
-            @click="this.state.fetchData(this.state.urls.prev), this.state.currentPage--"
+        <div class="navigationBtns d-flex gap-5 align-items-md-center">
+
+          <div class="btn-conteiner prev-button" @click="this.state.fetchData(this.state.urls.prev)"
             v-if="this.state.urls.hasOwnProperty('prev')">
             <a href="#" class="btn-content">
               <span class="icon-arrow">
@@ -72,8 +75,7 @@ export default {
             Page {{ this.state.currentPage }}
           </div>
 
-          <div class="btn-conteiner next-button"
-            @click="this.state.fetchData(this.state.urls.next), this.state.currentPage++"
+          <div class="btn-conteiner next-button" @click="this.state.fetchData(this.state.urls.next)"
             v-if="this.state.urls.hasOwnProperty('next')">
             <a href="#" class="btn-content">
               <span class="icon-arrow">
@@ -103,7 +105,7 @@ export default {
         </div>
         <!-- /.navitagionBtns -->
 
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3 py-5">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 py-5">
 
           <AppCard :element="element" v-for="element in this.state.data" />
 
@@ -165,14 +167,15 @@ export default {
 
 .btn-content:hover .icon-arrow {
   transition: 0.5s;
-  margin-right: 25px;
+  margin-right: 10px;
 }
 
 .icon-arrow {
   width: 20px;
   margin-left: 15px;
   position: relative;
-  top: 6%;
+  top: 0%;
+  left: -12%;
 }
 
 /* SVG */
