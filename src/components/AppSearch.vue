@@ -15,7 +15,7 @@ export default {
     keyup() {
       clearTimeout(this.typingTimer);
       this.typingTimer = setTimeout(() => {
-        this.state.fetchData();
+        this.state.fetchData(`https://api.github.com/search/${this.state.type}?q=${this.state.searched}`);
       }, 700);
     },
 
@@ -31,15 +31,23 @@ export default {
 <template>
 
   <div class="d-flex">
+
     <input type="text" placeholder="Search users by name" v-model="this.state.searched"
-      :class="this.state.invalidInput ? 'invalidInput' : ''" @keyup="keyup()">
+      :class="this.state.invalidInput ? 'invalidInput' : ''" @keyup="keyup()" maxlength="20">
+    <!-- /input -->
+
     <div v-if="this.state.invalidInput" class="text-danger">Devi digitare almeno 3 caratteri</div>
+
     <select name="type" id="type" v-model="this.state.type">
+
       <option value="repositories" selected>Repositories</option>
       <option value="users">Users</option>
-    </select>
 
-    <button @click="this.state.fetchData()" class="btn btn-light">Search</button>
+    </select>
+    <!-- /select -->
+
+    <button @click="this.state.fetchData(`https://api.github.com/search/${this.state.type}?q=${this.state.searched}`)"
+      class="btn btn-light">Search</button>
   </div>
 
 </template>

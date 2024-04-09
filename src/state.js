@@ -24,20 +24,46 @@ export const state = reactive({
     // booleano per visualizzare un loader
     loader: false,
 
-    fetchData() {
+    // oggetto che conterrà i link per fare le chiamate api alle altre pagine
+    urls: {},
+
+    currentPage: 1,
+
+    fetchData(url) {
 
         // Controllo che nell'input ci siano almeno 3 caratteri eliminando gli spazi
-        if (this.searched.length > 2 && this.searched.replace(/\s+/g, '').trim().length > 2) {
+        if (this.searched.replace(/\s+/g, '').trim().length > 2) {
 
             // visualizziamo il loader
             this.loader = true
 
-            axios.get(`https://api.github.com/search/${this.type}?q=${this.searched}`)
+            axios.get(url)
                 .then(response => {
 
-                    console.log(response.data.items);
-                    console.log(this.searched.length > 2);
-                    console.log(this.searched.replace(/\s+/g, '').trim().length > 2);
+                    console.log(response);
+
+                    if (response.headers.hasOwnProperty('link')) {
+
+                        // Nell'header sono presenti i link per next,prev e last, li divido in un array
+                        const links = response.headers.link.split(',');
+
+                        //Esempio: <https://api.github.com/search/repositories?q=aaa&page=2>; rel="next", <https://api.github.com/search/repositories?q=aaa&page=34>; rel="last"
+
+                        links.forEach(link => {
+
+                            const [url, rel] = link.split(';'); // Divido il link e il relativo attributo e li assegno a 2 variabili
+
+                            const urlValue = url.trim().slice(1, -1); // Rimuovo gli spazi e i caratteri < >
+
+                            const relValue = rel.trim().split('=')[1].slice(1, -1); // Rimuovo gli spazi e le virgolette da rel
+
+                            if (relValue === 'prev' || relValue === 'next' || relValue === 'last') {
+                                this.urls[relValue] = urlValue; // Salvo l'url nel relativo attributo dell'oggetto urls
+                            }
+
+                        });
+                    }
+
 
                     // Se ci sono risultati
                     if (response.data.items.length > 0) {
@@ -66,6 +92,10 @@ export const state = reactive({
                         // Se non abbiamo risultati
                     } else {
                         this.dataEmpty = true
+
+                        // togliamo il loader
+                        this.loader = false
+
                         console.log('nessun elemento trovato');
                     }
                 })
